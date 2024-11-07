@@ -55,4 +55,14 @@ public class OrderClient {
                 .get(StellarBurgerConst.ORDER)
                 .then().log().all();
     }
+
+    @Step("Получение данных об ингредиентах")
+    public ValidatableResponse getIngredients() {
+        return  given().log().all()
+                .contentType(ContentType.JSON)
+                .baseUri(StellarBurgerConst.BASE_URL)
+                .when()
+                .get(StellarBurgerConst.INGREDIENTS)
+                .then().log().all();
+    }
 }

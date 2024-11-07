@@ -21,5 +21,6 @@ public class StellarBurgerConst {
     //Order messages
     public static final String ORDER_NO_INGREDIENTS_MSG = "Ingredient ids must be provided";
 
-
+    //Ingredients endpoint
+    public static final String INGREDIENTS = "/api/ingredients";
 }

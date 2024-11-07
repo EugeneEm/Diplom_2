@@ -3,9 +3,16 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import jdk.jfr.Description;
+import order.Ingredient;
+import order.Ingredients;
 import order.OrderAssertion;
 import order.OrderClient;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.net.HttpURLConnection.*;
 import static org.junit.Assert.assertEquals;
 
@@ -14,14 +21,32 @@ public class OrderCreateTest {
 
     OrderClient orderClient = new OrderClient();
     OrderAssertion orderAssertion = new OrderAssertion();
-    String[] ingredients = {"\"61c0c5a71d1f82001bdaaa71\"", "\"61c0c5a71d1f82001bdaaa72\"", "\"61c0c5a71d1f82001bdaaa6e\""};
+
     String[] ingredientsIncorrect = {"\"123a\"", "\"456v\"", "\"789S\""};
+
+    String[] ingredientsList;
+    List<String> ids = new ArrayList<>();
+    Ingredients ingredients;
+
+    @Before
+    public void getIngredientsList() {
+        ValidatableResponse response = orderClient.getIngredients();
+        orderAssertion.getIngredientsData(response);
+        ingredients = response.extract().as(Ingredients.class);
+        System.out.println("Success: " + ingredients.isSuccess());
+        for (Ingredient ingredient : ingredients.getData()) {
+            ids.add(ingredient.get_id());
+        }
+        ids.remove(0);
+        System.out.println("Ingredients id list: " + ids);
+    }
 
     @Test
     @DisplayName("Создание заказа с ингредиентами")
     @Description("Создание заказа с ингредиентами, неавторизованный пользователь")
     public void createOrderWithIngredients() {
-        ValidatableResponse response = orderClient.orderCreateWithoutToken(ingredients);
+        ingredientsList = new String[]{"\"" + ids.get(0) + "\"", "\"" + ids.get(1) + "\""};
+        ValidatableResponse response = orderClient.orderCreateWithoutToken(ingredientsList);
         orderAssertion.createOrderSuccess(response);
     }
 

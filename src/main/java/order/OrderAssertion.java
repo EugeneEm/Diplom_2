@@ -1,4 +1,6 @@
 package order;
+import com.google.gson.Gson;
+
 
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
@@ -8,6 +10,8 @@ import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 import static org.hamcrest.Matchers.is;
 
 public class OrderAssertion {
+
+    Gson gson = new Gson();
 
     @Step("Проверка создания нового заказа")
     public void createOrderSuccess(ValidatableResponse response) {
@@ -53,5 +57,12 @@ public class OrderAssertion {
 
     public String getResponseGetOrderName(ValidatableResponse response) {
         return response.extract().path("orders[0].name");
+    }
+
+    @Step("Проверка получения данных об ингредиентах")
+    public void getIngredientsData(ValidatableResponse response) {
+         response.assertThat()
+                .statusCode(HTTP_OK)
+                .body("success", is(true));
     }
 }
